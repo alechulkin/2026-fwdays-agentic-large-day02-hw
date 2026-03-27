@@ -51,7 +51,3 @@ Use `docs/memory-bank` as the single source of project memory.
 2. Record impacted areas (packages, modules, commands, tests).
 3. Record follow-up work, open questions, and risks.
 4. Confirm entries are stored under `docs/memory-bank`.
-
-## Files
-
-- snake-case for files: `element_utils.ts`

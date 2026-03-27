@@ -53,7 +53,7 @@ alwaysApply: false
 
 ### Files
 
-- Verify non-component files use kebab-case (e.g. `element-utils.ts`)
+- Verify non-component files use kebab-case (e.g. `element_utils.ts`)
 - Ensure React component files use PascalCase (e.g. `LayerUI.tsx`)
 
 ### Memory Bank

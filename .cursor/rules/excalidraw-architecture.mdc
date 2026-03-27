@@ -1,6 +1,9 @@
 ---
+description: "Architecture constraints for Excalidraw"
+globs: packages/excalidraw/**
 alwaysApply: false
 ---
+
 # Excalidraw Architecture
 
 ## State Management
