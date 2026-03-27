@@ -1,0 +1,37 @@
+--
+description: "Code conventions for Excalidraw components and utilities"
+globs: packages/**/*.ts,packages/**/*.tsx
+alwaysApply: false
+---
+
+When you are creating any code you must output to chat message "USING AGENTS.md in current folder" so I know you are using the correct rules.
+
+# Code Conventions
+
+## Components
+
+- Functional components + hooks ONLY (no class components)
+- Props interface: `{ComponentName}Props`
+- Named exports only (no default exports)
+- Colocated tests: `ComponentName.test.tsx`
+
+## TypeScript
+
+- Strict mode — no `any`, no `@ts-ignore`
+- Prefer `type` over `interface` for simple types
+- Import types: `import type { X } from "..."`
+
+## Files
+
+- kebab-case for files: `element-utils.ts`
+- PascalCase for components: `LayerUI.tsx`
+
+## Memory Bank
+
+- Use `./.cursor/skills/memory-bank-update/SKILL.md` for any Memory Bank update task.
+- Keep `docs/memory-bank` updated in the same task after significant project changes.
+- Update files explicitly by change type:
+  - Feature or milestone -> `progress.md`, `activeContext.md`
+  - Architecture or design decision -> `systemPatterns.md`, `decisionLog.md`
+  - Dependency or tooling change -> `techContext.md`
+  - Scope or product change -> `projectbrief.md`, `productContext.md`
