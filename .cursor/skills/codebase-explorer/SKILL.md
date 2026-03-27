@@ -27,14 +27,14 @@ Common triggers:
    - Integration samples: `examples/`.
 
 2. **Follow typical Excalidraw flows (trace in code, not only conceptually)**
-   - **Scene → elements → render:** `packages/excalidraw/scene/` (scene, `renderScene`, types) and `packages/excalidraw/scene/renderer.ts` for the canvas pipeline; element instances live in `packages/element/` (models, bindings, shape helpers).
+   - **Scene → elements → render:** `packages/excalidraw/scene/` (scene, `renderScene`, types) and `packages/excalidraw/scene/Renderer.ts` for the canvas pipeline; element instances live in `packages/element/` (models, bindings, shape helpers).
    - **File formats / import (.excalidraw, images, library):** `packages/excalidraw/data/` — e.g. `blob.ts` (load from blob), `restore.ts` (deserialize / compat), export helpers alongside; validate conclusions by reading the functions that parse JSON and call `restoreElements` / `restoreAppState`.
    - **Serialization / export:** same `packages/excalidraw/data/` tree plus export paths from `App` and components; trace from user action → `export` / clipboard / file save.
    - **Collaboration / sync / awareness:** `excalidraw-app/collab/` (`Collab.tsx`, `Portal.tsx`, socket wiring), room keys and encryption via `packages/excalidraw/data/encryption` (as imported from the app); app-level data helpers in `excalidraw-app/data/`.
    - **Actions & events:** `packages/excalidraw/actions/` (`manager.tsx`, individual actions), and `packages/excalidraw/components/App.tsx` for high-level keyboard/pointer handling and scene updates.
 
 3. **Map key files before summarizing**
-   - Tie the question to concrete paths: e.g. scene composition (`scene/` + `Scene`), rendering (`renderer.ts`, `renderScene`), element behavior (`packages/element/`), import/export (`data/blob.ts`, `data/restore.ts`, export modules), collaboration adapters (`excalidraw-app/collab`).
+   - Tie the question to concrete paths: e.g. scene composition (`scene/` + `Scene`), rendering (`Renderer.ts`, `renderScene`), element behavior (`packages/element/`), import/export (`data/blob.ts`, `data/restore.ts`, export modules), collaboration adapters (`excalidraw-app/collab`).
 
 4. **Narrow with search**
    - Use `@folder` / `@codebase` or repo search from the directories above; read README or module headers if present.

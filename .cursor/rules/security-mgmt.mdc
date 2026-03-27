@@ -22,7 +22,7 @@ Secrets exposure leads to critical system compromise. Excalidraw also handles un
 - **SVG / XML / XSS:** SVG exports, embedded metadata, and clipboard/HTML paths can carry script-like content; avoid piping untrusted strings into the DOM without review. Treat `dangerouslySetInnerHTML`, `innerHTML`, and similar sinks as high-risk.
 - **`.excalidraw` / scene import:** Untrusted JSON must be validated and restored through the normal pipeline (e.g. `isValidExcalidrawData`, `restoreElements`, `restoreAppState` via `loadSceneOrLibraryFromBlob` and related helpers)—not executed as code or trusted blindly.
 - **Collaboration:** Encrypted collaboration uses the room key with `encryptData` / `decryptData` (see `excalidraw-app/collab`); wire formats should remain encrypted in transit/storage where designed. Do not log room keys, persist them in plaintext outside intended flows, or stash key material in analytics.
-- **Firebase:** Storage and Firestore access is governed by `firebase-project/storage.rules` and `firebase-project/firestore.rules`; changes must preserve appropriate read/write/list restrictions for rooms, share links, and project storage.
+- **Firebase:** `firebase-project/storage.rules` and `firebase-project/firestore.rules` must follow **default deny**: only explicitly matched paths are allowed; everything else is rejected. **Target policy (production):** for **`rooms`** and **`shareLinks`** paths, **read** must not be world-open unless the product explicitly uses unguessable paths + other controls—prefer **authenticated** access where **only room members** or holders of a **valid share token** (as modeled in rules) may read; **write** must be **denied** except for the **room owner** or identities with an explicit **write/membership** claim; **list** must stay **off** for broad buckets (allow only under **user-scoped** or tightly prefixed paths). Any **public** object paths need an **explicit `allow`** with documented rationale; do not rely on `if true` for `read`/`write` on shared assets without review.
 
 ## How to verify
 
@@ -49,5 +49,15 @@ Secrets exposure leads to critical system compromise. Excalidraw also handles un
 
 ### Firebase rules and project storage
 
-- Review `firebase-project/storage.rules` and `firebase-project/firestore.rules` for get/write/list rules on rooms, share links, and shared files
-- After rule changes, confirm read/write access still matches product intent (no accidental public write or over-broad list)
+Use this **pass/fail** checklist on `firebase-project/storage.rules` and `firebase-project/firestore.rules` (mark each row **PASS** or **FAIL**; any **FAIL** blocks merge until fixed or explicitly risk-accepted):
+
+| Check | PASS criteria | FAIL (examples) |
+|--------|----------------|-----------------|
+| **Default deny** | Unmatched paths are not covered by permissive rules; no silent “open” catch-all for project storage. | Open `match` with `if true` for all reads/writes without auth or token checks. |
+| **Storage: `rooms` / `shareLinks` read** | `read`/`get` allows only clients that meet policy: **authenticated** and (**room member** OR **valid share-token / share-link** predicate encoded in rules), unless the team documents a different threat model. | `allow get, read: if true` (or equivalent) on `rooms/{room}` or `shareLinks/{shareLink}` without `request.auth` / custom claims / path secrets as required by product. |
+| **Storage: `rooms` / `shareLinks` write** | `write` allowed only for **room owner** or identities with an explicit **write** / **membership** flag in rules (custom claims or metadata). | `allow write: if true` for anonymous or arbitrary users. |
+| **Storage / Firestore: list** | **LIST** is **disallowed** for broad collections; listing only under **user-scoped** or narrowly prefixed paths if needed. | `allow list: if true` on wide paths; listing entire `rooms` or `shareLinks` trees to unauthenticated users. |
+| **Public files** | Any intentionally public path has an **explicit** `allow` and comment; all other paths default **deny**. | Public read by accident via blanket `if true`. |
+| **Firestore `get` / `write`** | Document reads/writes require **auth** (or documented server-only access pattern), not `if true` for all documents. | `allow get, write: if true` on `/{document=**}`. |
+
+**Current snapshot (verify against repo):** if `storage.rules` still contains `allow get, write: if true` under `rooms` / `shareLinks`, mark **FAIL** on read/write rows until tightened. If `firestore.rules` allows `get, write: if true` for all documents, mark **FAIL** on the Firestore row until scoped.

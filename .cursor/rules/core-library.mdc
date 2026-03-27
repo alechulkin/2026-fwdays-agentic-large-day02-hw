@@ -1,5 +1,5 @@
 ---
-description: "Core Library (packages/excalidraw): strict TypeScript; keep ': any' and 'as any' minimal or absent"
+description: "Core Library (packages/excalidraw): strict typing; scene/immutable updates; no app coupling; canvas pipeline; minimal ': any' / 'as any'"
 globs: packages/excalidraw/**/*.{ts,tsx}
 alwaysApply: false
 ---
@@ -14,14 +14,21 @@ This is the main React/TypeScript library consumed by external apps. It must be 
 
 - Maintain strict TypeScript typing; avoid `: any` and `as any` except where unavoidable
 - Avoid breaking public API
-- Prefer pure functions and predictable behavior
-- Do not introduce app-specific logic
-- Keep components reusable and composable
-- Avoid direct DOM manipulation unless necessary
+- **Scene and state:** Use `AppState`, the `Scene`, and element collections as the editor source of truth. Drive changes through the existing update paths (e.g. `ActionManager.executeAction`, `App` setState/updater flows) instead of side caches or globals. Prefer **immutable** element/scene updates (new references, consistent `versionNonce` / scene sync) matching nearby code; do not add in-place mutation of elements or maps unless the file already follows an established internal pattern.
+- **No app-specific logic in `packages/excalidraw/**`:** Do not import `excalidraw-app`, Firebase, app-only socket/collab clients, or host-specific analytics. Do not branch on `import.meta.env` / URLs / feature toggles that only exist for excalidraw.com. Integrations belong in the app layer; the library must stay usable via props and the public `@excalidraw/excalidraw` API.
+- **Reusable library UI:** Editor components should be composable for embedders—controlled by props, `AppState`, and documented callbacks—without hardcoded product routes, deployment-only URLs, or layout that assumes the official app shell.
+- **Canvas vs DOM:** Keep scene painting on the **canvas** through the existing pipeline (`renderStaticScene` / `renderInteractiveScene` and helpers), including **RAF-throttled** paths (e.g. `throttleRAF`) already in the renderer—do not add second draw loops or imperative full clears that bypass it. Use the DOM only where the codebase already does for focused UI (text editing, portals, a11y); avoid `document.querySelector` / ad-hoc DOM for the drawing surface instead of React + canvas.
 
 ## How to verify
 
 - Search for usages of `: any` and `as any` and report occurrences — expect minimal or zero matches
 - To narrow results, use ripgrep (or equivalent) with patterns such as `:\s*any\b` and `\bas any\b`
-- Ensure exported APIs are stable and documented
+- **Public API (stability + documentation)** — when this change touches exports, run a concrete review:
+  1. **Find changed entry barrels** (adjust `origin/main` to your base branch):  
+     `git diff --name-only origin/main...HEAD -- packages/excalidraw/index.tsx packages/common/src/index.ts packages/element/src/index.ts packages/math/src/index.ts packages/utils/src/index.ts`  
+     Broader alternative: `git diff --name-only origin/main...HEAD -- 'packages/**/index.ts' 'packages/**/index.tsx'` then keep only published package roots (above paths + `packages/excalidraw/index.tsx`).
+  2. **List exports** in each changed barrel (default export, named exports, `export type`, `export { … }`, `export * from`):  
+     `rg -n "^export " packages/excalidraw/index.tsx` (repeat for other changed index files).
+  3. **Pass criteria for each new or changed public symbol** (anything consumers import from `@excalidraw/excalidraw` or sibling packages): the symbol must have a **`/**` … `*/` JSDoc** on the implementation or re-export line, **or** be covered in **`dev-docs/`** (search: `rg -n "SymbolName" dev-docs/`). Undocumented new exports fail review unless a doc PR exists.
+  4. **Breaking changes:** confirm semver/changelog expectations for the repo (no silent signature changes on exported functions/classes/components).
 - Confirm no references to app-specific modules (excalidraw-app)

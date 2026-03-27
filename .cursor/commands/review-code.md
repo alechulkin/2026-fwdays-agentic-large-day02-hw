@@ -14,7 +14,11 @@ This command performs a full senior-level code review of the selected code or di
 When this command is triggered:
 
 1. Analyze the provided code (or git diff if available)
-2. Perform a structured review across:
+2. Enforce project rules (cite `.cursor/rules/*` when flagging issues):
+   - **`.cursor/rules/do-not-touch.mdc`:** If the diff touches `Renderer.ts`, `restore.ts`, `manager.tsx`, or `types.ts` under `packages/excalidraw/` as listed there, flag as **High** unless the review context shows explicit approval and test/QA plan.
+   - **`.cursor/rules/security-mgmt.mdc`:** Flag new secrets in code, logging of tokens/keys, unsafe `innerHTML` / `dangerouslySetInnerHTML` with untrusted data, bypass of validated `.excalidraw` restore, collaboration key leakage, or permissive Firebase rule edits without rationale.
+   - **`.cursor/rules/excalidraw-architecture.mdc`:** Flag `dispatch()` on the action manager, Redux/Zustand for editor state, drawing via React DOM instead of canvas pipeline, new npm deps without approval, or **library code importing `excalidraw-app`** / app-only env.
+3. Perform a structured review across:
    - Correctness (bugs)
    - Security
    - Performance
@@ -26,10 +30,10 @@ When this command is triggered:
      - **check_collaboration_encryption_impact**: Require explicit review of collaboration and encryption-related code paths (sync, presence, E2E, key handling) when those areas are modified or depended on.
      - **check_i18n_ui_texts**: Ensure any UI text added or changed uses i18n keys and includes or updates translations (no hardcoded user-visible strings in components that should be localized).
      - **Completeness**: For Excalidraw-related changes, the structured review is incomplete unless **check_excalidraw_file_import**, **check_scene_renderer_changes**, **check_collaboration_encryption_impact**, and **check_i18n_ui_texts** have each been considered and noted (pass, issue, or not applicable with brief rationale).
-3. Identify all relevant issues
-4. Suggest concrete fixes for each issue
-5. Assign scores per category (1–10)
-6. Provide a final verdict
+4. Identify all relevant issues
+5. Suggest concrete fixes for each issue
+6. Assign scores per category (1–10)
+7. Provide a final verdict
 
 ## Output Format (MANDATORY)
 
@@ -111,22 +115,20 @@ Steps **9–12** use the same identifiers as the Mandatory Excalidraw domain che
    - Each issue includes a concrete fix (code or clear instruction)
    - No vague suggestions
 
-7. **Security coverage**
-   - Check common vulnerability classes:
-     - Input validation
-     - Injection risks
-     - Secrets exposure
+7. **Security coverage** (align with `.cursor/rules/security-mgmt.mdc`)
+   - Input validation; injection; secrets exposure
+   - SVG/XML/DOM sinks; `.excalidraw` restore path; collaboration keys; Firebase rules if changed
 
-8. **Architecture awareness**
-   - Module boundaries respected
-   - No forbidden dependencies introduced (per project rules)
+8. **Architecture awareness** (align with `.cursor/rules/excalidraw-architecture.mdc` and `core-library.mdc`)
+   - Module boundaries respected; state updates via `actionManager.executeAction`, not `dispatch()`
+   - No forbidden dependencies; no `excalidraw-app` imports from `packages/excalidraw/**`
 
 9. **check_excalidraw_file_import** (mandatory for import/restore/file-format changes)
    - Confirm `.excalidraw` import and restore paths reject or sanitize unsafe external references.
    - Failure: unvalidated external URLs, arbitrary file paths, or restore logic that could execute unintended content.
 
-10. **check_scene_renderer_changes** (mandatory when diff touches scene/renderer)
-    - Confirm visual or regression impact is called out; suggest snapshot or manual canvas checks when relevant.
+10. **check_scene_renderer_changes** (mandatory when diff touches `packages/excalidraw/scene/` or `Renderer.ts` / renderer pipeline)
+    - Confirm visual or regression impact is called out; suggest snapshot or manual canvas checks when relevant. If the diff modifies a **do-not-touch** file (`Renderer.ts`, etc.), require explicit approval + tests/QA per `.cursor/rules/do-not-touch.mdc`.
 
 11. **check_collaboration_encryption_impact** (mandatory when diff touches collaboration or crypto)
     - Confirm collaboration and encryption paths are explicitly reviewed (sync, keys, transport); flag missing threat or compat notes.

@@ -49,7 +49,7 @@ yarn fix             # Auto-fix formatting and linting issues
 ## Do-Not-Touch / Constraints
 
 - **Protected files** (do not edit without explicit approval, full dependency understanding, full test run, and manual QA — see `.cursor/rules/do-not-touch.mdc`):
-  - `packages/excalidraw/scene/renderer.ts` — render pipeline
+  - `packages/excalidraw/scene/Renderer.ts` — render pipeline
   - `packages/excalidraw/data/restore.ts` — file format compatibility
   - `packages/excalidraw/actions/manager.tsx` — action system
   - `packages/excalidraw/types.ts` — core types
