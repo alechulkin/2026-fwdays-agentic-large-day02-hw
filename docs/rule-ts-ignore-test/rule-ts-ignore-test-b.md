@@ -1,4 +1,4 @@
-# TS Ignore Test B
+# Rule TS Ignore Test B
 
 ## Prompt
 
