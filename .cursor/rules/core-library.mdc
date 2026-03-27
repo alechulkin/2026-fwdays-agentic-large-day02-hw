@@ -1,5 +1,5 @@
 ---
-description: "Module: Core Library (packages/excalidraw)"
+description: "Core Library (packages/excalidraw): strict TypeScript; keep ': any' and 'as any' minimal or absent"
 globs: packages/excalidraw/**/*.{ts,tsx}
 alwaysApply: false
 ---
@@ -12,7 +12,7 @@ This is the main React/TypeScript library consumed by external apps. It must be 
 
 ## Rule
 
-- Maintain strict TypeScript typing (no any)
+- Maintain strict TypeScript typing; avoid `: any` and `as any` except where unavoidable
 - Avoid breaking public API
 - Prefer pure functions and predictable behavior
 - Do not introduce app-specific logic
@@ -21,6 +21,7 @@ This is the main React/TypeScript library consumed by external apps. It must be 
 
 ## How to verify
 
-- Search for any usage — should be minimal or zero
+- Search for usages of `: any` and `as any` and report occurrences — expect minimal or zero matches
+- To narrow results, use ripgrep (or equivalent) with patterns such as `:\s*any\b` and `\bas any\b`
 - Ensure exported APIs are stable and documented
 - Confirm no references to app-specific modules (excalidraw-app)

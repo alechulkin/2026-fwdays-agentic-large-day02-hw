@@ -1,0 +1,53 @@
+---
+description: "Security: secrets, untrusted content (SVG/XSS, imports), collaboration encryption, and Firebase rules"
+alwaysApply: true
+---
+
+# Security Management
+
+## Context
+
+Secrets exposure leads to critical system compromise. Excalidraw also handles untrusted files, SVG/XML, collaboration encryption, and Firebase-backed storage—each needs explicit review.
+
+## Rule
+
+### Secrets and configuration
+
+- Never hardcode secrets (API keys, tokens, passwords, private keys, connection strings)
+- Use environment variables (`process.env` / `import.meta.env` where the build expects them) or a secret manager; do not commit real secrets
+- Do not log sensitive data; mask secrets and other sensitive values in logs and error reporting
+
+### Excalidraw-specific risks
+
+- **SVG / XML / XSS:** SVG exports, embedded metadata, and clipboard/HTML paths can carry script-like content; avoid piping untrusted strings into the DOM without review. Treat `dangerouslySetInnerHTML`, `innerHTML`, and similar sinks as high-risk.
+- **`.excalidraw` / scene import:** Untrusted JSON must be validated and restored through the normal pipeline (e.g. `isValidExcalidrawData`, `restoreElements`, `restoreAppState` via `loadSceneOrLibraryFromBlob` and related helpers)—not executed as code or trusted blindly.
+- **Collaboration:** Encrypted collaboration uses the room key with `encryptData` / `decryptData` (see `excalidraw-app/collab`); wire formats should remain encrypted in transit/storage where designed. Do not log room keys, persist them in plaintext outside intended flows, or stash key material in analytics.
+- **Firebase:** Storage and Firestore access is governed by `firebase-project/storage.rules` and `firebase-project/firestore.rules`; changes must preserve appropriate read/write/list restrictions for rooms, share links, and project storage.
+
+## How to verify
+
+### Secrets and logs
+
+- Scan for hardcoded credentials and secret-like literals
+- Ensure configuration uses `process.env` / `import.meta.env` (or a secret manager), not embedded secrets
+- Check logs and telemetry for sensitive data leakage; confirm masking/redaction for secrets and tokens (keep existing discipline: do not log secrets; mask sensitive values in logs)
+
+### SVG / XML / script and DOM sinks
+
+- Search for `dangerouslySetInnerHTML`, `innerHTML`, and similar APIs; confirm only trusted or sanitized content is assigned
+- Review SVG/XML-heavy flows (export, library thumbnails, metadata) for unintended script or markup injection
+
+### `.excalidraw` import and parsing
+
+- Confirm imports use validated restore paths (e.g. blob load + `isValidExcalidrawData` / restore), not unchecked `JSON.parse` of arbitrary files
+- When changing restore or file loaders, confirm new fields cannot override safety checks or execute untrusted data
+
+### Collaboration encryption and keys
+
+- Confirm collaboration payloads use the encryption helpers with the room key where applicable; verify encrypted messages over the socket and encrypted blobs in storage match existing patterns
+- Ensure room key / encryption material is not written to logs, crash reports, or persistent storage in plaintext beyond defined UX (e.g. hash fragment for sharing)
+
+### Firebase rules and project storage
+
+- Review `firebase-project/storage.rules` and `firebase-project/firestore.rules` for get/write/list rules on rooms, share links, and shared files
+- After rule changes, confirm read/write access still matches product intent (no accidental public write or over-broad list)

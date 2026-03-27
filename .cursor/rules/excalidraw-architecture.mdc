@@ -9,7 +9,7 @@ alwaysApply: false
 ## State Management
 
 - Custom state via actionManager — NOT Redux/Zustand/MobX
-- State updates: actionManager.dispatch() ONLY
+- State updates: `actionManager.executeAction(action, source?, value?)` only — `ActionManager` has no `dispatch()`; use registered `Action` objects and the manager API
 - State type: AppState (packages/excalidraw/types.ts)
 
 ## Rendering
@@ -28,7 +28,7 @@ alwaysApply: false
 ### State management
 
 - Confirm custom state goes through `actionManager`, not Redux, Zustand, or MobX
-- Confirm state updates go through `actionManager.dispatch()` only
+- Confirm state updates go through `actionManager.executeAction(...)` only (in tests, `API.executeAction` delegates to the same manager)
 - Confirm relevant state is typed with `AppState` from `packages/excalidraw/types.ts`
 
 ### Rendering

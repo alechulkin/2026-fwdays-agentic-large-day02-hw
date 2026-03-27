@@ -94,7 +94,7 @@ For each fix:
 - **Protected files** (see `.cursor/rules/do-not-touch.mdc`): never modify without explicit user approval:
   - `packages/excalidraw/scene/renderer.ts`
   - `packages/excalidraw/data/restore.ts`
-  - `packages/excalidraw/actions/manager.ts`
+  - `packages/excalidraw/actions/manager.tsx`
   - `packages/excalidraw/types.ts`
 - If a fix would touch a protected file → **STOP** and request approval
 - Maintain strict TypeScript compliance

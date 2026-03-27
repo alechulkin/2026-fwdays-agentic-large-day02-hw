@@ -1,6 +1,6 @@
 # Directory Structure
 
-```
+```text
 .coderabbit.yaml (234 lines)
 AGENTS.md (57 lines)
 .codesandbox/Dockerfile (5 lines)

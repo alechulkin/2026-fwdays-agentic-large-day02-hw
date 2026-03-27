@@ -20,6 +20,12 @@ When this command is triggered:
    - Performance
    - Code quality
    - Architecture
+   - **Mandatory Excalidraw domain checks** (reviewers must validate these when the change touches Excalidraw-related code; cite the check identifier in findings when applicable):
+     - **check_excalidraw_file_import**: Verify safe import and restore of `.excalidraw` files; disallow or flag unsafe external references (URLs, embedded resources, or paths that could leak data or execute unintended loads).
+     - **check_scene_renderer_changes**: Flag any changes touching scene or renderer modules for visual and regression review (render pipeline, canvas output, export parity).
+     - **check_collaboration_encryption_impact**: Require explicit review of collaboration and encryption-related code paths (sync, presence, E2E, key handling) when those areas are modified or depended on.
+     - **check_i18n_ui_texts**: Ensure any UI text added or changed uses i18n keys and includes or updates translations (no hardcoded user-visible strings in components that should be localized).
+     - **Completeness**: For Excalidraw-related changes, the structured review is incomplete unless **check_excalidraw_file_import**, **check_scene_renderer_changes**, **check_collaboration_encryption_impact**, and **check_i18n_ui_texts** have each been considered and noted (pass, issue, or not applicable with brief rationale).
 3. Identify all relevant issues
 4. Suggest concrete fixes for each issue
 5. Assign scores per category (1–10)
@@ -72,6 +78,8 @@ For each issue:
 
 ## How to verify
 
+Steps **9–12** use the same identifiers as the Mandatory Excalidraw domain checks in **Perform a structured review** (Instructions, step 2); reviewers validating an Excalidraw-related change must confirm each applicable check.
+
 1. **Command execution**
    - Run `/review-code` on a file or diff
    - Ensure output follows the required structure
@@ -112,6 +120,19 @@ For each issue:
 8. **Architecture awareness**
    - Module boundaries respected
    - No forbidden dependencies introduced (per project rules)
+
+9. **check_excalidraw_file_import** (mandatory for import/restore/file-format changes)
+   - Confirm `.excalidraw` import and restore paths reject or sanitize unsafe external references.
+   - Failure: unvalidated external URLs, arbitrary file paths, or restore logic that could execute unintended content.
+
+10. **check_scene_renderer_changes** (mandatory when diff touches scene/renderer)
+    - Confirm visual or regression impact is called out; suggest snapshot or manual canvas checks when relevant.
+
+11. **check_collaboration_encryption_impact** (mandatory when diff touches collaboration or crypto)
+    - Confirm collaboration and encryption paths are explicitly reviewed (sync, keys, transport); flag missing threat or compat notes.
+
+12. **check_i18n_ui_texts** (mandatory when diff adds or changes user-visible UI copy)
+    - Confirm strings use the project i18n mechanism and that keys/translations exist or are called out as follow-up.
 
 ## Example usage
 

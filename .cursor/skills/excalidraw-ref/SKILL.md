@@ -31,10 +31,10 @@ Use this skill when you need to:
 Check `project-structure.md` for the directory tree:
 
 ```
-src/
-  index.ts (42 lines)
-  utils/
-    helpers.ts (128 lines)
+packages/excalidraw/components/
+  App.tsx (12818 lines)
+packages/common/src/
+  utils.ts (1331 lines)
 ```
 
 ### 2. Read file contents
@@ -42,7 +42,7 @@ src/
 Grep in `files.md` for the file path:
 
 ```
-## File: src/utils/helpers.ts
+## File: packages/common/src/utils.ts
 ```
 
 ### 3. Search for code
@@ -50,7 +50,7 @@ Grep in `files.md` for the file path:
 Grep in `files.md` for keywords:
 
 ```
-function calculateTotal
+export const getDateTime
 ```
 
 ## Common Use Cases
