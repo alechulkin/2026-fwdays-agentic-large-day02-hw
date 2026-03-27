@@ -1,10 +1,8 @@
---
+---
 description: "Code conventions for Excalidraw components and utilities"
 globs: packages/**/*.ts,packages/**/*.tsx
 alwaysApply: false
 ---
-
-When you are creating any code you must output to chat message "USING AGENTS.md in current folder" so I know you are using the correct rules.
 
 # Code Conventions
 
@@ -17,7 +15,8 @@ When you are creating any code you must output to chat message "USING AGENTS.md 
 
 ## TypeScript
 
-- Strict mode — no `any`, no `@ts-ignore`
+- Strict mode - no `any`, no `@ts-ignore`
+- Enable strict compilation: `compilerOptions.strict` in applicable `tsconfig.json` files
 - Prefer `type` over `interface` for simple types
 - Import types: `import type { X } from "..."`
 
@@ -35,3 +34,38 @@ When you are creating any code you must output to chat message "USING AGENTS.md 
   - Architecture or design decision -> `systemPatterns.md`, `decisionLog.md`
   - Dependency or tooling change -> `techContext.md`
   - Scope or product change -> `projectbrief.md`, `productContext.md`
+
+## How to verify
+
+### Components
+
+- Search for `class extends React.Component` -> should find zero
+- Verify props are typed as `{ComponentName}Props`
+- Check there are no `export default` usages
+- Verify colocated tests are named `ComponentName.test.tsx`
+
+### TypeScript
+
+- Search for `any` and `@ts-ignore` -> should find zero
+- Confirm applicable `tsconfig.json` files have `compilerOptions.strict` enabled
+- Ensure `type` is used for simple structures instead of `interface`
+- Check `import type` is used for type-only imports
+
+### Files
+
+- Verify non-component files use kebab-case (e.g. `element-utils.ts`)
+- Ensure React component files use PascalCase (e.g. `LayerUI.tsx`)
+
+### Memory Bank
+
+- For Memory Bank work, follow `./.cursor/skills/memory-bank-update/SKILL.md`
+- After significant changes, verify updates exist in `docs/memory-bank`
+- Ensure correct file is updated based on change type:
+  - Feature or milestone → `progress.md`, `activeContext.md`
+  - Architecture or design decision → `systemPatterns.md`, `decisionLog.md`
+  - Dependency or tooling change → `techContext.md`
+  - Scope or product change → `projectbrief.md`, `productContext.md`
+- Confirm updates are done in the same task (not deferred)
+
+
+

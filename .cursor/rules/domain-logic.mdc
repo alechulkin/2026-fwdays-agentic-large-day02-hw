@@ -1,0 +1,28 @@
+---
+description: "Module: Domain Logic (packages/element)"
+globs: packages/element/**/*.ts
+alwaysApply: false
+---
+
+# Module: Domain Logic (packages/element)
+
+## Context
+
+Contains core domain logic for elements (business logic layer).
+
+## Applies to
+
+packages/element/**/*.ts
+
+## Rule
+
+- Encapsulate business rules clearly
+- Avoid UI concerns (no React, no DOM)
+- Prefer immutable data structures
+- Use explicit types for all domain entities
+
+## How to verify
+
+- Ensure no React or DOM usage
+- Check immutability (no direct object mutation)
+- Validate domain types are well defined

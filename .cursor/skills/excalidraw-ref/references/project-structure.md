@@ -2,7 +2,7 @@
 
 ```
 .coderabbit.yaml (234 lines)
-.codesandbox/AGENTS.md (64 lines)
+AGENTS.md (57 lines)
 .codesandbox/Dockerfile (5 lines)
 .codesandbox/tasks.json (50 lines)
 .cursor/rules/conventions.mdc (37 lines)

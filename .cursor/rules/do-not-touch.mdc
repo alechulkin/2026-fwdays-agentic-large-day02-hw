@@ -18,3 +18,8 @@ Changes to protected files require:
 1. Full understanding of dependencies
 2. Running complete test suite
 3. Manual QA verification
+
+## How to verify
+
+- Before editing, compare the target path against the protected list above -> if it matches, do not change the file without explicit approval
+- For any approved change to a protected file, confirm all three requirements are met: dependencies understood, complete test suite run, manual QA done

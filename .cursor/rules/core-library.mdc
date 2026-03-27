@@ -1,0 +1,26 @@
+---
+description: "Module: Core Library (packages/excalidraw)"
+globs: packages/excalidraw/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Module: Core Library (packages/excalidraw)
+
+## Context
+
+This is the main React/TypeScript library consumed by external apps. It must be stable, typed, and side-effect safe.
+
+## Rule
+
+- Maintain strict TypeScript typing (no any)
+- Avoid breaking public API
+- Prefer pure functions and predictable behavior
+- Do not introduce app-specific logic
+- Keep components reusable and composable
+- Avoid direct DOM manipulation unless necessary
+
+## How to verify
+
+- Search for any usage — should be minimal or zero
+- Ensure exported APIs are stable and documented
+- Confirm no references to app-specific modules (excalidraw-app)

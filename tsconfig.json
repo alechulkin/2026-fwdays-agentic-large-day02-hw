@@ -36,7 +36,6 @@
     "examples",
     "dist",
     "types",
-    "tests",
-    "packages/element/exampleTest.ts"
+    "tests"
   ]
 }

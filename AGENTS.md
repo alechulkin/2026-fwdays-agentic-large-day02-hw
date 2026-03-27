@@ -18,16 +18,11 @@ Excalidraw is a **monorepo** with a clear separation between the core library an
 
 ## Development Commands
 
-
-<CodeBlockWrapper v-bind="{}" :ranges='[]'>
-
 ```bash
 yarn test:typecheck  # TypeScript type checking
 yarn test:update     # Run all tests (with snapshot updates)
 yarn fix             # Auto-fix formatting and linting issues
 ```
-
-</CodeBlockWrapper>
 
 ## Architecture Notes
 
@@ -37,7 +32,6 @@ yarn fix             # Auto-fix formatting and linting issues
 - Internal packages use path aliases (see `vitest.config.mts`)
 - Build system uses esbuild for packages, Vite for the app
 - TypeScript throughout with strict configuration
-
 
 # Memory Bank
 
@@ -57,7 +51,6 @@ Use `docs/memory-bank` as the single source of project memory.
 2. Record impacted areas (packages, modules, commands, tests).
 3. Record follow-up work, open questions, and risks.
 4. Confirm entries are stored under `docs/memory-bank`.
-
 
 ## Files
 

@@ -19,3 +19,22 @@ alwaysApply: false
 
 - No new npm packages without explicit approval
 - Check packages/utils/ before adding external helpers
+
+## How to verify
+
+### State management
+
+- Confirm custom state goes through `actionManager`, not Redux, Zustand, or MobX
+- Confirm state updates go through `actionManager.dispatch()` only
+- Confirm relevant state is typed with `AppState` from `packages/excalidraw/types.ts`
+
+### Rendering
+
+- Confirm drawing uses Canvas 2D, not React DOM
+- Confirm the render pipeline is `Scene` → `renderScene()` → canvas context
+- Search for `react-konva`, `fabric.js`, and `pixi.js` -> should find no use
+
+### Dependencies
+
+- Confirm any new npm dependency was added only with explicit approval
+- Before relying on a new external helper, search `packages/utils/` for an existing equivalent

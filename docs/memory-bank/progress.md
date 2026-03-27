@@ -6,6 +6,9 @@ This file categorizes what appears implemented vs. partially implemented based o
 
 ## Completed
 
+- **TypeScript ignore fixture for quick checks**
+  - Added `add-one.ts` at repository root with deliberate `@ts-ignore` usage and a mismatched type assignment for local ts-ignore behavior validation.
+
 - **Embeddable React editor component**
   - `@excalidraw/excalidraw` is exported as a React component (`packages/excalidraw/index.tsx`).
   - Integration assumptions are documented: import CSS and render into a container with non-zero height (`packages/excalidraw/README.md`).
